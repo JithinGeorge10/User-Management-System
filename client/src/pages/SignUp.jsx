@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { apiClient } from '../lib/api-client';
 import { useNavigate } from 'react-router-dom';
 import { SIGNUP_ROUTE } from '../utils/Constants';
 function SignUp() {
-    const navigate=useNavigate()
+
+
+    const navigate = useNavigate()
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -15,10 +17,10 @@ function SignUp() {
     const validateSignUp = () => {
         // Regular expressions for validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const usernameRegex = /^[a-zA-Z]+$/; // Only letters, no numbers or special characters
+        const usernameRegex = /^[a-zA-Z]+( [a-zA-Z]+)*$/;
         const phoneRegex = /^\d{10}$/; // Exactly 10 digits
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/; // At least 6 characters, one uppercase, one lowercase, one digit, one special character
-    
+
         if (!name.length && !email.length && !phone.length && !password.length && !confirmPassword.length) {
             toast.error('Please fill in all fields');
             return false;
@@ -45,13 +47,21 @@ function SignUp() {
         }
         return true;
     };
-    
 
-    const handleSignup =async () => {
-        if (validateSignUp()) {
-           let response=await apiClient.post(SIGNUP_ROUTE,{name,email,phone,password},{withCredentials:true})
-           console.log({response});
-           navigate('/home')
+
+    const handleSignup = async () => {
+        try {
+            if (validateSignUp()) {
+                let response = await apiClient.post(SIGNUP_ROUTE, { name, email, phone, password }, { withCredentials: true })
+                console.log({ response });
+                navigate('/home')
+            }
+        } catch (error) {
+            if (error.response && error.response.data && error.response.data.message) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error('An error occurred during sign-up. Please try again.');
+            }
         }
     };
 

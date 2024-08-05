@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import video from '../assets/EmployeeManagement.mp4';
 
 
 function Login() {
-
+   
     return (
         <div className="h-screen flex justify-center items-center bg-gray-100">
             <div className="bg-transparent p-4 md:p-8 rounded-lg shadow-lg w-full md:w-1/2 lg:w-1/3 xl:w-1/4 relative">
@@ -29,7 +29,7 @@ function Login() {
                             type="email"
                             id="email"
                             placeholder="eg: name@email.com"
-                        
+
                         />
                     </div>
                     <div className="mb-4">
