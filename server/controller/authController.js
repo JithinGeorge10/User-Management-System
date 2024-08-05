@@ -1,5 +1,6 @@
 import user from "../model/userModel.js"
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt';
 
 
 const maxAge = 3 * 24 * 60 * 60 * 1000
@@ -52,4 +53,31 @@ export const verifyjwt = async (req, res) => {
     }
 }
 
+
+export const login = async (req, res) => {
+    try {
+        console.log('login');
+        const { email, password } = req.body
+        if (!email || !password) {
+            return res.status(400).send('email and password required')
+        }
+        const userDetails = await user.findOne({ email })
+        console.log(userDetails);
+        if (!userDetails) {
+            return res.status(404).send('User not found');
+        }
+        const isMatch = await bcrypt.compare(password, userDetails.password);
+        if (!isMatch) {
+            return res.status(401).send('Invalid password');
+        }
+        res.cookie('jwt', createToken(email, userDetails.id), {
+            maxAge,
+            sameSite: 'None',
+            secure: true
+        })
+        return res.status(200).json(userDetails);
+    } catch (error) {
+        console.log(error);
+    }
+}
 
