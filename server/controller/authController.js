@@ -8,7 +8,6 @@ const createToken = (email, userId) => {
 }
 export const signUp = async (req, res) => {
     try {
-        console.log(req.body)
         const { email, password, phone, username } = req.body
 
         if (!email || !password) {
@@ -52,3 +51,5 @@ export const verifyjwt = async (req, res) => {
         console.log(error);
     }
 }
+
+

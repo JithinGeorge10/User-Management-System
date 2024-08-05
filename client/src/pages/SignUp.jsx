@@ -19,7 +19,6 @@ function SignUp() {
         (async function () {
             try {
                 const isLoggedIn = await verifyJWT()
-                console.log({ isLoggedIn })
                 if (isLoggedIn) {
                     navigate('/home')
                 }
@@ -71,7 +70,6 @@ function SignUp() {
         try {
             if (validateSignUp()) {
                 let response = await apiClient.post(SIGNUP_ROUTE, { name, email, phone, password }, { withCredentials: true })
-                console.log({ response });
                 navigate('/home')
             }
         } catch (error) {

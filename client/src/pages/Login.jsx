@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import video from '../assets/EmployeeManagement.mp4';
 import Loading from '../components/LoadingPage';
+import { verifyJWT } from '../utils/apiCall';
 
 
 function Login() {
@@ -10,8 +11,9 @@ function Login() {
     useEffect(() => {
       (async function () {
         try {
+            console.log('login')
           const isLoggedIn = await verifyJWT()
-          console.log({isLoggedIn})
+          console.log({isLoggedIn});
           if (isLoggedIn) {
             navigate('/home')
           }
