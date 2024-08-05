@@ -4,22 +4,40 @@ import { toast } from 'sonner';
 import { apiClient } from '../lib/api-client';
 import { useNavigate } from 'react-router-dom';
 import { SIGNUP_ROUTE } from '../utils/Constants';
+import Loading from '../components/LoadingPage';
+import { verifyJWT } from '../utils/apiCall';
 function SignUp() {
-
-
     const navigate = useNavigate()
+    const [isLoading, setIsLoading] = useState(true)
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [phone, setPhone] = useState('');
 
+    useEffect(() => {
+        (async function () {
+            try {
+                const isLoggedIn = await verifyJWT()
+                console.log({ isLoggedIn })
+                if (isLoggedIn) {
+                    navigate('/home')
+                }
+            } catch (error) {
+                navigate('/home')
+                console.log(error.message)
+            } finally {
+                setIsLoading(false)
+            }
+        })()
+    }, [])
+    if (isLoading) return <Loading />
+
     const validateSignUp = () => {
-        // Regular expressions for validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const usernameRegex = /^[a-zA-Z]+( [a-zA-Z]+)*$/;
-        const phoneRegex = /^\d{10}$/; // Exactly 10 digits
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/; // At least 6 characters, one uppercase, one lowercase, one digit, one special character
+        const phoneRegex = /^\d{10}$/;
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
 
         if (!name.length && !email.length && !phone.length && !password.length && !confirmPassword.length) {
             toast.error('Please fill in all fields');

@@ -1,10 +1,29 @@
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import video from '../assets/EmployeeManagement.mp4';
+import Loading from '../components/LoadingPage';
 
 
 function Login() {
-   
+    const navigate = useNavigate()
+    const [isLoading, setIsLoading] = useState(true)
+    useEffect(() => {
+      (async function () {
+        try {
+          const isLoggedIn = await verifyJWT()
+          console.log({isLoggedIn})
+          if (isLoggedIn) {
+            navigate('/home')
+          }
+        } catch (error) {
+          navigate('/home')
+          console.log(error.message)
+        } finally {
+          setIsLoading(false)
+        }
+      })()
+    }, [])
+    if (isLoading) return <Loading/>
     return (
         <div className="h-screen flex justify-center items-center bg-gray-100">
             <div className="bg-transparent p-4 md:p-8 rounded-lg shadow-lg w-full md:w-1/2 lg:w-1/3 xl:w-1/4 relative">
