@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import video from '../assets/EmployeeManagement.mp4';
 import Loading from '../components/LoadingPage';
 import { verifyJWT } from '../utils/apiCall';
 import { toast } from 'sonner';
 import { apiClient } from '../lib/api-client';
 import { LOGIN_ROUTE } from '../utils/Constants';
-
+import { useDispatch } from 'react-redux';
+import { setUserDetails } from '../utils/userSlice.js';
 function Login() {
+    const dispatch = useDispatch();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate()
@@ -15,9 +16,7 @@ function Login() {
     useEffect(() => {
         (async function () {
             try {
-                console.log('login')
                 const isLoggedIn = await verifyJWT()
-                console.log({ isLoggedIn });
                 if (isLoggedIn) {
                     navigate('/home')
                 }
@@ -45,11 +44,16 @@ function Login() {
         return true;
     };
     const handleLogin = async () => {
-        if (validateSignUp()) {
-            let response = await apiClient.post(LOGIN_ROUTE, { email, password }, { withCredentials: true })
-            console.log(response);
-            navigate('/home')
+        try {
+            if (validateSignUp()) {
+                let response = await apiClient.post(LOGIN_ROUTE, { email, password }, { withCredentials: true })
+                dispatch(setUserDetails(response.data));
+                navigate('/home')
+            }
+        } catch (error) {
+            console.log(error.message);
         }
+
     }
     return (
         <div className="h-screen flex justify-center items-center bg-gray-100">

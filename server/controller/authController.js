@@ -9,8 +9,7 @@ const createToken = (email, userId) => {
 }
 export const signUp = async (req, res) => {
     try {
-        const { email, password, phone, username } = req.body
-
+        const { email, password, phone, name } = req.body
         if (!email || !password) {
             return res.status(400).send('email and password required')
         }
@@ -18,7 +17,7 @@ export const signUp = async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ message: 'User with this email or phone number already exists.' });
         }
-        const userDetails = await user.create({ email, password, phone, username })
+        const userDetails = await user.create({ email, password, phone, username:name })
         res.cookie('jwt', createToken(email, userDetails.id), {
             maxAge,
             sameSite: 'None',
@@ -43,7 +42,6 @@ export const verifyjwt = async (req, res) => {
     try {
         console.log(req.cookies.jwt);
         if (req.cookies.jwt) {
-            console.log('retrurned')
             res.send(true)
         } else {
             res.send(false)
@@ -62,7 +60,6 @@ export const login = async (req, res) => {
             return res.status(400).send('email and password required')
         }
         const userDetails = await user.findOne({ email })
-        console.log(userDetails);
         if (!userDetails) {
             return res.status(404).send('User not found');
         }
