@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { useSelector } from 'react-redux';
 import { setUserDetails } from '../utils/userSlice.js'
 import { useDispatch } from 'react-redux';
-import { fetchUserDetails, uploadImagesToFireStore } from '../utils/firestore.js'
+import { uploadImagesToFireStore } from '../utils/firestore.js'
 function Home() {
   const dispatch = useDispatch();
   const userDetails = useSelector((state) => state.user.userDetails);
@@ -21,13 +21,6 @@ function Home() {
         if (!isLoggedIn) {
           navigate('/')
         }
-        if (userDetails) {
-          const userImages = await fetchUserDetails(userDetails._id);
-          console.log(userImages)
-          if (userImages.length > 0) {
-            setImage(userImages[0].url);
-          }
-        }
       } catch (error) {
         navigate('/')
       } finally {
@@ -35,8 +28,6 @@ function Home() {
       }
     })()
   }, [])
-
-
 
   useEffect(() => {
     if (userDetails) {
@@ -70,12 +61,14 @@ function Home() {
   };
   const uploadImage = async () => {
     try {
-      await uploadImagesToFireStore(image, userDetails.username, userDetails._id);
+      const imageUrl = await uploadImagesToFireStore(image, userDetails._id);
+      dispatch(setUserDetails({ ...userDetails, url: imageUrl }));
+      localStorage.setItem('userDetails', JSON.stringify({ ...userDetails, url: imageUrl }));
+      setImage(imageUrl)
     } catch (error) {
       console.log(error);
     }
   }
-  console.log({ image })
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <Navbar></Navbar>
@@ -89,7 +82,7 @@ function Home() {
 
 
               <img
-                src={image}
+                src={userDetails.url}
                 id="profile-img"
                 alt="Upload Profile pic"
                 className="w-40 h-100 rounded-full border-4 border-gray-300"

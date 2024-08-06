@@ -47,7 +47,6 @@ function Login() {
         try {
             if (validateSignUp()) {
                 let response = await apiClient.post(LOGIN_ROUTE, { email, password }, { withCredentials: true })
-                console.log(response);
                 dispatch(setUserDetails(response.data));
                 navigate('/home')
             }

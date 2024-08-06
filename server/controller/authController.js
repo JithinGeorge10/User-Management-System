@@ -17,7 +17,7 @@ export const signUp = async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ message: 'User with this email or phone number already exists.' });
         }
-        const userDetails = await user.create({ email, password, phone, username:name })
+        const userDetails = await user.create({ email, password, phone, username: name })
         res.cookie('jwt', createToken(email, userDetails.id), {
             maxAge,
             sameSite: 'None',
@@ -65,10 +65,25 @@ export const login = async (req, res) => {
             sameSite: 'None',
             secure: true
         })
-      
+
         return res.status(200).json(userDetails);
     } catch (error) {
         console.log(error);
     }
 }
 
+
+
+export const uploadUrl = async (req, res) => {
+    try {
+        const { userid, url } = req.body
+        const imageUrl = await user.findByIdAndUpdate(
+            userid,
+            { url },
+            { new: true }
+        );
+        return res.status(200).json(imageUrl);
+    } catch (error) {
+        console.log(error);
+    }
+}
