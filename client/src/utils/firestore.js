@@ -7,7 +7,6 @@ const db = getFirestore(app);
 
 export async function uploadImagesToFireStore(image, userid) {
   try {
-    console.log(image);
     const storage = getStorage();
     const storageRef = ref(storage, `images/${image.name}`)
     await uploadBytes(storageRef, image).then((snapshot) => {

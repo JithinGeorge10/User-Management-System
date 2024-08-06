@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux';
 import { setUserDetails } from '../utils/userSlice.js'
 import { useDispatch } from 'react-redux';
 import { uploadImagesToFireStore } from '../utils/firestore.js'
+import Swal from 'sweetalert2';
+
 function Home() {
   const dispatch = useDispatch();
   const userDetails = useSelector((state) => state.user.userDetails);
@@ -46,25 +48,47 @@ function Home() {
 
   const handleLogout = () => {
     try {
-      alert('Are you sure?')
-      document.cookie = "jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      sessionStorage.clear();
-      localStorage.clear();
-      dispatch(setUserDetails(null));
-      toast.success("Logged out successfully!", {
-        autoClose: 3000,
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You will be logged out of the application.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, log out!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          document.cookie = "jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          sessionStorage.clear();
+          localStorage.clear();
+          dispatch(setUserDetails(null));
+          toast.success("Logged out successfully!", {
+            autoClose: 3000,
+          });
+          navigate('/');
+        }
       });
-      navigate('/');
+  
     } catch (error) {
       console.error("Logout failed:", error);
     }
   };
   const uploadImage = async () => {
     try {
-      const imageUrl = await uploadImagesToFireStore(image, userDetails._id);
-      dispatch(setUserDetails({ ...userDetails, url: imageUrl }));
-      localStorage.setItem('userDetails', JSON.stringify({ ...userDetails, url: imageUrl }));
-      setImage(imageUrl)
+      if(!image){
+        toast.error("Select an image to upload", {
+          autoClose: 3000,
+        });
+      }else{
+        const imageUrl = await uploadImagesToFireStore(image, userDetails._id);
+        dispatch(setUserDetails({ ...userDetails, url: imageUrl }));
+        localStorage.setItem('userDetails', JSON.stringify({ ...userDetails, url: imageUrl }));
+        setImage(imageUrl)
+        toast.success("Image uploaded successfully!", {
+          autoClose: 3000,
+        });
+      }
+    
     } catch (error) {
       console.log(error);
     }
