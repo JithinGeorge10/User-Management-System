@@ -6,7 +6,10 @@ import { useNavigate } from 'react-router-dom';
 import { SIGNUP_ROUTE } from '../utils/Constants';
 import Loading from '../components/LoadingPage';
 import { verifyJWT } from '../utils/apiCall';
+import { useDispatch } from 'react-redux';
+import { setUserDetails } from '../utils/userSlice';
 function SignUp() {
+    const dispatch = useDispatch();
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(true)
     const [name, setName] = useState('');
@@ -70,6 +73,8 @@ function SignUp() {
         try {
             if (validateSignUp()) {
                 let response = await apiClient.post(SIGNUP_ROUTE, { name, email, phone, password }, { withCredentials: true })
+                console.log(response);
+                dispatch(setUserDetails(response.data));
                 navigate('/home')
             }
         } catch (error) {

@@ -5,11 +5,15 @@ import Loading from '../components/LoadingPage.jsx'
 import Navbar from '../components/Navbar.jsx'
 import { toast } from 'sonner'
 import { useSelector } from 'react-redux';
-
+import { setUserDetails } from '../utils/userSlice.js'
+import { useDispatch } from 'react-redux';
+import { fetchUserDetails, uploadImagesToFireStore } from '../utils/firestore.js'
 function Home() {
+  const dispatch = useDispatch();
   const userDetails = useSelector((state) => state.user.userDetails);
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(true)
+  const [image, setImage] = useState(null)
   useEffect(() => {
     (async function () {
       try {
@@ -17,13 +21,35 @@ function Home() {
         if (!isLoggedIn) {
           navigate('/')
         }
+        if (userDetails) {
+          const userImages = await fetchUserDetails(userDetails._id);
+          console.log(userImages)
+          if (userImages.length > 0) {
+            setImage(userImages[0].url);
+          }
+        }
       } catch (error) {
         navigate('/')
       } finally {
         setIsLoading(false)
       }
     })()
-  }, [navigate])
+  }, [])
+
+
+
+  useEffect(() => {
+    if (userDetails) {
+      localStorage.setItem('userDetails', JSON.stringify(userDetails));
+    }
+  }, [userDetails]);
+
+  useEffect(() => {
+    const storedUserDetails = localStorage.getItem('userDetails');
+    if (storedUserDetails) {
+      dispatch(setUserDetails(JSON.parse(storedUserDetails)));
+    }
+  }, []);
 
   if (isLoading) return <Loading />
 
@@ -33,6 +59,7 @@ function Home() {
       document.cookie = "jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       sessionStorage.clear();
       localStorage.clear();
+      dispatch(setUserDetails(null));
       toast.success("Logged out successfully!", {
         autoClose: 3000,
       });
@@ -41,7 +68,14 @@ function Home() {
       console.error("Logout failed:", error);
     }
   };
-
+  const uploadImage = async () => {
+    try {
+      await uploadImagesToFireStore(image, userDetails.username, userDetails._id);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  console.log({ image })
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <Navbar></Navbar>
@@ -53,11 +87,14 @@ function Home() {
           <div className="flex-shrink-0 w-full md:w-1/3 flex items-center justify-center mb-4 md:mb-0">
             <div className="flex flex-col items-center">
 
+
               <img
+                src={image}
                 id="profile-img"
-                  
+                alt="Upload Profile pic"
                 className="w-40 h-100 rounded-full border-4 border-gray-300"
               />
+
               <br />
               <input
                 type="file"
@@ -68,11 +105,12 @@ function Home() {
                   if (file) {
                     const imgElement = document.getElementById('profile-img');
                     imgElement.src = URL.createObjectURL(file);
+                    setImage(file)
                   }
                 }}
               />
               <br />
-              <button className='w-30 bg-gradient-to-r from-gray-800 to-gray-500 hover:from-gray-900 hover:to-gray-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'>Upload Image</button>
+              <button onClick={uploadImage} className='w-30 bg-gradient-to-r from-gray-800 to-gray-500 hover:from-gray-900 hover:to-gray-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'>Upload Image</button>
             </div>
           </div>
 

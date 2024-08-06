@@ -47,11 +47,17 @@ function Login() {
         try {
             if (validateSignUp()) {
                 let response = await apiClient.post(LOGIN_ROUTE, { email, password }, { withCredentials: true })
+                console.log(response);
                 dispatch(setUserDetails(response.data));
                 navigate('/home')
             }
         } catch (error) {
-            console.log(error.message);
+            if (error.response && error.response.status === 400) {
+                toast.error(error.response.data);
+            } else {
+                console.log(error.message);
+                toast.error('Enter proper user credentials');
+            }
         }
 
     }

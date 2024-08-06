@@ -23,14 +23,7 @@ export const signUp = async (req, res) => {
             sameSite: 'None',
             secure: true
         })
-        return res.status(201).json({
-            user: {
-                id: userDetails.id,
-                email: userDetails.email,
-                phone: userDetails.phone,
-                username: userDetails.username
-            }
-        })
+        return res.status(200).json(userDetails);
     } catch (error) {
         console.log(error);
     }
@@ -40,7 +33,6 @@ export const signUp = async (req, res) => {
 
 export const verifyjwt = async (req, res) => {
     try {
-        console.log(req.cookies.jwt);
         if (req.cookies.jwt) {
             res.send(true)
         } else {
@@ -60,6 +52,7 @@ export const login = async (req, res) => {
             return res.status(400).send('email and password required')
         }
         const userDetails = await user.findOne({ email })
+        console.log(userDetails);
         if (!userDetails) {
             return res.status(404).send('User not found');
         }
@@ -72,6 +65,7 @@ export const login = async (req, res) => {
             sameSite: 'None',
             secure: true
         })
+      
         return res.status(200).json(userDetails);
     } catch (error) {
         console.log(error);
