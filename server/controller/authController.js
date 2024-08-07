@@ -7,6 +7,10 @@ const maxAge = 3 * 24 * 60 * 60 * 1000
 const createToken = (email, userId) => {
     return jwt.sign({ email, userId }, process.env.JWT_KEY, { expiresIn: maxAge })
 }
+const createAdminToken = (email) => {
+    console.log("am called...")
+    return jwt.sign({ email }, process.env.JWT_KEY, { expiresIn: maxAge })
+}
 export const signUp = async (req, res) => {
     try {
         const { email, password, phone, name } = req.body
@@ -34,6 +38,19 @@ export const signUp = async (req, res) => {
 export const verifyjwt = async (req, res) => {
     try {
         if (req.cookies.jwt) {
+            res.send(true)
+        } else {
+            res.send(false)
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+export const verifyadminjwt = async (req, res) => {
+    try {
+        console.log('verifadmin');
+        console.log(req.cookies.jwtToken);
+        if (req.cookies.jwtToken) {
             res.send(true)
         } else {
             res.send(false)
@@ -83,6 +100,31 @@ export const uploadUrl = async (req, res) => {
             { new: true }
         );
         return res.status(200).json(imageUrl);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const adminlogin = async (req, res) => {
+    try {
+        console.log(req.body)
+        console.log('admincontroller');
+        const { email, password } = req.body
+        if (!email || !password) {
+            return res.status(400).send('email and password required')
+        }
+        if (email != process.env.ADMIN_EMAIL || password != process.env.ADMIN_PASSWORD) {
+            return res.status(400).send('Enter valid credentials')
+        }
+        let adminToken=createAdminToken(email)
+        console.log(adminToken);
+        res.cookie('jwtToken', adminToken, {
+            maxAge,
+            sameSite: 'None',
+            secure: true
+        })
+        return res.status(200).send('Login successfull');
+
     } catch (error) {
         console.log(error);
     }

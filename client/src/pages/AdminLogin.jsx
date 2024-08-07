@@ -1,68 +1,71 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import Loading from '../components/LoadingPage';
-import { verifyJWT } from '../utils/apiCall';
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { ADMIN_LOGIN } from '../utils/Constants'
 import { toast } from 'sonner';
 import { apiClient } from '../lib/api-client';
-import { LOGIN_ROUTE } from '../utils/Constants';
-import { useDispatch } from 'react-redux';
-import { setUserDetails } from '../utils/userSlice.js';
-function Login() {
-    const dispatch = useDispatch();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const navigate = useNavigate()
+import { verifyAdminJWT } from '../utils/apiCall';
+import Loading from '../components/LoadingPage';
+
+function AdminLogin() {
     const [isLoading, setIsLoading] = useState(true)
+    const navigate = useNavigate()
     useEffect(() => {
         (async function () {
             try {
-                const isLoggedIn = await verifyJWT()
+                const isLoggedIn = await verifyAdminJWT()
                 if (isLoggedIn) {
-                    navigate('/home')
+                    navigate('/adminhome')
                 }
             } catch (error) {
-                navigate('/home')
+                navigate('/adminhome')
                 console.log(error.message)
             } finally {
                 setIsLoading(false)
             }
         })()
     }, [])
+
     if (isLoading) return <Loading />
 
-    const validateSignUp = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const validateForm = () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
+        if (!email.length && !password.length) {
+            toast.error('Please fill in all fields');
+            return false;
+        }
+        if (!password.length) {
+            toast.error('Please enter password');
+            return false;
+        }
         if (!emailRegex.test(email)) {
             toast.error('Invalid email format. It should be in the form of name@gmail.com');
             return false;
         }
-        if (!passwordRegex.test(password)) {
-            toast.error('Password must be at least 6 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character');
-            return false;
-        }
-        return true;
-    };
+        return true
+
+    }
     const handleLogin = async () => {
         try {
-            if (validateSignUp()) {
-                let response = await apiClient.post(LOGIN_ROUTE, { email, password }, { withCredentials: true })
-                dispatch(setUserDetails(response.data));
-                navigate('/home')
+            if (validateForm()) {
+                await apiClient.post(ADMIN_LOGIN, { email, password })
+                navigate('/adminhome')
             }
         } catch (error) {
-            if (error.response && error.response.status === 400) {
+            console.log(error);
+            if (error.response && error.response.data) {
                 toast.error(error.response.data);
             } else {
-                console.log(error.message);
-                toast.error('Enter proper user credentials');
+                toast.error('An error occurred during sign-up. Please try again.');
             }
         }
     }
+
     return (
         <div className="h-screen flex justify-center items-center bg-gray-100">
             <div className="bg-transparent p-4 md:p-8 rounded-lg shadow-lg w-full md:w-1/2 lg:w-1/3 xl:w-1/4 relative">
-                <h2 className="text-center mt-4 text-2xl font-bold mb-4">Login</h2>
+                <h2 className="text-center mt-4 text-2xl font-bold mb-4">Admin Login</h2>
                 <div className="flex justify-center mb-4">
 
                 </div>
@@ -88,9 +91,10 @@ function Login() {
                         className="rounded-full p-2 md:p-4 w-full"
                         type="password"
                         id="password"
+                        value={password}
                         placeholder="Enter your password"
                         onChange={(e) => setPassword(e.target.value)}
-                        value={password}
+
                     />
                 </div>
                 <button
@@ -100,18 +104,9 @@ function Login() {
                 >
                     Login
                 </button>
-
-                <div className="text-center mt-4">
-                    <span className="text-gray-700 text-sm font-bold">Not a User?</span>
-                    <Link to='/signup' className="text-blue-500 hover:text-blue-700 font-bold ml-2">
-                        Sign up
-                    </Link>
-                </div>
-
-
             </div>
         </div>
-    );
+    )
 }
 
-export default Login;
+export default AdminLogin
