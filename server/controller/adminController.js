@@ -99,6 +99,15 @@ export const edituser = async (req, res) => {
     try {
         const { userId, phone, email, name } = req.body;
         console.log(req.body);
+        const existingEmailUser = await user.findOne({ email, _id: { $ne: userId } });
+        if (existingEmailUser) {
+          return res.status(400).json({ message: 'Email already in use' });
+        }
+    
+        const existingPhoneUser = await user.findOne({ phone, _id: { $ne: userId } });
+        if (existingPhoneUser) {
+          return res.status(400).json({ message: 'Phone number already in use' });
+        }
         await user.findByIdAndUpdate(
             userId,
             { phone, email,username: name },

@@ -5,6 +5,7 @@ import Loading from '../components/LoadingPage'
 import { useParams } from 'react-router-dom';
 import { apiClient } from '../lib/api-client';
 import { EDIT_USER, USER_DETAIL } from '../utils/Constants';
+import { toast } from 'sonner';
 function Edituser() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -37,13 +38,44 @@ function Edituser() {
             setPhone(response.data.phone)
         })();
     }, [userId]);
+    const validateSignUp = () => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const usernameRegex = /^[a-zA-Z]+( [a-zA-Z]+)*$/;
+        const phoneRegex = /^\d{10}$/;
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
 
-    const handleSubmit = async() => {
+        if (!name.length && !email.length && !phone.length) {
+            toast.error('Please fill in all fields');
+            return false;
+        }
+        if (!emailRegex.test(email)) {
+            toast.error('Invalid email format. It should be in the form of name@gmail.com');
+            return false;
+        }
+        if (!usernameRegex.test(name)) {
+            toast.error('Username should only contain letters without numbers or special characters');
+            return false;
+        }
+        if (!phoneRegex.test(phone)) {
+            toast.error('Phone number should be exactly 10 digits');
+            return false;
+        }
+
+        return true;
+    };
+
+    const handleSubmit = async () => {
         try {
-            await apiClient.post(EDIT_USER, {userId, name, email,phone },{withCredentials:true})
-            navigate('/adminhome')
+            if (validateSignUp()) {
+                await apiClient.post(EDIT_USER, { userId, name, email, phone }, { withCredentials: true })
+                navigate('/adminhome')
+            }
         } catch (error) {
-            console.log(error);
+            if (error.response && error.response.data && error.response.data.message) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error('An error occurred during sign-up. Please try again.');
+            }
         }
     }
 
