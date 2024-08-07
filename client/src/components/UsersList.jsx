@@ -3,7 +3,7 @@ import { apiClient } from '../lib/api-client';
 import { DELETE_ROUTE, USERDETAIL_ROUTE } from '../utils/Constants';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-function UsersList() {
+function UsersList({ searchTerm }) {
     const navigate=useNavigate()
     const [users, setUsers] = useState(null);
 
@@ -48,9 +48,14 @@ function UsersList() {
         }
     }
 
+    const filteredUsers = users?.filter(user =>
+        user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        String(user.phone).includes(searchTerm) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
     return (
         <tbody>
-            {users && users.map((user, index) => (
+            {filteredUsers && filteredUsers.map((user, index) => (
                 <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     <td>
                         <div className="ps-3">
