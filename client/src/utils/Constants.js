@@ -19,3 +19,8 @@ export const USERDETAIL_ROUTE=`${AUTH_ROUTES}/userdetails`
 export const DELETE_ROUTE=`${AUTH_ROUTES}/deleteuser`
 
 export const ADD_USER=`${AUTH_ROUTES}/adduser`
+
+export const USER_DETAIL=`${AUTH_ROUTES}/userdetailsedit`
+
+export const EDIT_USER=`${AUTH_ROUTES}/edituser`
+

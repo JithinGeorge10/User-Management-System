@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import AdminLogin from './pages/AdminLogin'
 import AdminHome from './pages/AdminHome'
 import Adduser from './pages/Adduser'
+import Edituser from './pages/Edituser'
 
 function App() {
 
@@ -19,8 +20,7 @@ function App() {
           <Route path='/admin' element={<AdminLogin />} />
           <Route path='/adminhome' element={<AdminHome />} />
           <Route path='/addUser' element={<Adduser />} />
-          <Route path='*' element={<Navigate to='/' />} />
-          
+          <Route path='/edituser/:userId' element={<Edituser />} />
         </Routes>
       </Router>
     </>

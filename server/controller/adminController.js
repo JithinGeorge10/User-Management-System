@@ -5,6 +5,21 @@ const createAdminToken = (email) => {
     return jwt.sign({ email }, process.env.JWT_KEY, { expiresIn: maxAge })
 }
 
+export const verifyadminjwt = async (req, res) => {
+    try {
+        if (req.cookies.jwtToken) {
+            jwt.verify(req.cookies.jwtToken, process.env.JWT_KEY);
+
+            res.send(true)
+        } else {
+            res.send(false)
+        }
+    } catch (error) {
+        res.send(false)
+        console.log(error);
+    }
+}
+
 export const adduser = async (req, res) => {
     try {
         const { email, password, phone, name } = req.body
@@ -16,7 +31,7 @@ export const adduser = async (req, res) => {
             return res.status(400).json({ message: 'User with this email or phone number already exists.' });
         }
         const userDetails = await user.create({ email, password, phone, username: name })
-       
+
         return res.status(200).json(userDetails);
     } catch (error) {
         console.log(error);
@@ -69,3 +84,33 @@ export const deleteuser = async (req, res) => {
         res.status(500).json({ message: 'Server Error' });
     }
 }
+export const userDetailsEdit = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const existingUser = await user.findOne({ _id: userId });
+        return res.status(200).json(existingUser);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+}
+
+export const edituser = async (req, res) => {
+    try {
+        const { userId, phone, email, name } = req.body;
+        console.log(req.body);
+        await user.findByIdAndUpdate(
+            userId,
+            { phone, email,username: name },
+            { new: true, runValidators: true }
+        )
+        res.status(200).send('user edited successfully');
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+}
+
+
+
+

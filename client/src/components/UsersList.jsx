@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { apiClient } from '../lib/api-client';
 import { DELETE_ROUTE, USERDETAIL_ROUTE } from '../utils/Constants';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 function UsersList() {
+    const navigate=useNavigate()
     const [users, setUsers] = useState(null);
 
     useEffect(() => {
@@ -38,6 +40,14 @@ function UsersList() {
         }
     }
 
+    const handleEdit = (userId) => {
+        try {
+            navigate(`/edituser/${userId}`)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return (
         <tbody>
             {users && users.map((user, index) => (
@@ -62,8 +72,8 @@ function UsersList() {
                         {user.email}
                     </td>
                     <td className="px-6 py-4">
-                    <button
-                            onClick={() => handleDelete(user._id)}
+                        <button
+                            onClick={() => handleEdit(user._id)}
                             className="w-30 bg-gradient-to-r from-blue-800 to-blue-500 hover:from-blue-900 hover:to-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                             type="button"
                         >

@@ -43,17 +43,7 @@ export const verifyjwt = async (req, res) => {
         console.log(error);
     }
 }
-export const verifyadminjwt = async (req, res) => {
-    try {
-        if (req.cookies.jwtToken) {
-            res.send(true)
-        } else {
-            res.send(false)
-        }
-    } catch (error) {
-        console.log(error);
-    }
-}
+
 
 
 export const login = async (req, res) => {

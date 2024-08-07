@@ -4,8 +4,13 @@ import { useNavigate } from 'react-router-dom'
 function UsersTable() {
     const navigate = useNavigate()
     const handleAddUser = () => {
-        navigate('/addUser')
+        try {
+            navigate('/addUser')
+        } catch (error) {
+            console.log(error);
+        }
     }
+
     return (
         <div>
             <div class="relative overflow-x-auto shadow-md ">
@@ -57,9 +62,7 @@ function UsersTable() {
                         </tr>
                     </thead>
 
-
                     <UsersList />
-
 
                 </table>
 
