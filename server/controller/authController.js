@@ -48,8 +48,6 @@ export const verifyjwt = async (req, res) => {
 }
 export const verifyadminjwt = async (req, res) => {
     try {
-        console.log('verifadmin');
-        console.log(req.cookies.jwtToken);
         if (req.cookies.jwtToken) {
             res.send(true)
         } else {
@@ -127,5 +125,15 @@ export const adminlogin = async (req, res) => {
 
     } catch (error) {
         console.log(error);
+    }
+}
+
+export const userdetails = async (req, res) => {
+    try {
+        const users = await user.find(); 
+        res.status(200).json(users);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
     }
 }
