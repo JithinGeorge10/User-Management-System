@@ -4,6 +4,7 @@ import SignUp from './pages/SignUp'
 import Home from './pages/Home'
 import AdminLogin from './pages/AdminLogin'
 import AdminHome from './pages/AdminHome'
+import Adduser from './pages/Adduser'
 
 function App() {
 
@@ -17,8 +18,9 @@ function App() {
           <Route path='/home' element={<Home />} />
           <Route path='/admin' element={<AdminLogin />} />
           <Route path='/adminhome' element={<AdminHome />} />
+          <Route path='/addUser' element={<Adduser />} />
           <Route path='*' element={<Navigate to='/' />} />
-
+          
         </Routes>
       </Router>
     </>

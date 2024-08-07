@@ -33,7 +33,6 @@ function UsersList() {
                     }
                 }
             });
-
         } catch (error) {
             console.log(error);
         }
@@ -63,8 +62,13 @@ function UsersList() {
                         {user.email}
                     </td>
                     <td className="px-6 py-4">
-                        <a href="#" type="button" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit user</a>
-                    </td>
+                    <button
+                            onClick={() => handleDelete(user._id)}
+                            className="w-30 bg-gradient-to-r from-blue-800 to-blue-500 hover:from-blue-900 hover:to-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            type="button"
+                        >
+                            Edit User
+                        </button>                    </td>
                     <td>
                         <button
                             onClick={() => handleDelete(user._id)}
