@@ -25,7 +25,7 @@ function AdminLogin() {
         })()
     }, [])
 
-    if (isLoading) return <Loading />
+   
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -61,7 +61,7 @@ function AdminLogin() {
             }
         }
     }
-
+    if (isLoading) return <Loading />
     return (
         <div className="h-screen flex justify-center items-center bg-gray-100">
             <div className="bg-transparent p-4 md:p-8 rounded-lg shadow-lg w-full md:w-1/2 lg:w-1/3 xl:w-1/4 relative">
