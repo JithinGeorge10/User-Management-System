@@ -5,7 +5,7 @@ import morgan from 'morgan'
 import cors from 'cors'
 import mongoose from 'mongoose'
 import cookieParser from 'cookie-parser'
-import bodyParser from 'body-parser'
+
 
 dotenv.config()
 const app = express()

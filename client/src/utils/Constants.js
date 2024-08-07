@@ -15,3 +15,5 @@ export const UPLOAD_URL=`${AUTH_ROUTES}/uploadurl`
 export const ADMIN_LOGIN=`${AUTH_ROUTES}/adminlogin`
 
 export const USERDETAIL_ROUTE=`${AUTH_ROUTES}/userdetails`
+
+export const DELETE_ROUTE=`${AUTH_ROUTES}/deleteuser`

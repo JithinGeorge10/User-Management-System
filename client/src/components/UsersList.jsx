@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { apiClient } from '../lib/api-client';
-import { USERDETAIL_ROUTE } from '../utils/Constants';
-
+import { DELETE_ROUTE, USERDETAIL_ROUTE } from '../utils/Constants';
+import Swal from 'sweetalert2';
 function UsersList() {
     const [users, setUsers] = useState(null);
 
@@ -12,7 +12,32 @@ function UsersList() {
         })();
     }, []);
 
-    console.log(users);
+    const handleDelete = async (userId) => {
+        try {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You will be logged out of the application.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, log out!',
+                cancelButtonText: 'No, cancel!',
+                reverseButtons: true
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const response = await apiClient.post(DELETE_ROUTE, { userId }, { withCredentials: true })
+                    if (response.status === 200) {
+                        // Refresh the page after deletion
+                        window.location.reload();
+                    } else {
+                        console.log('Error deleting user:', response.status);
+                    }
+                }
+            });
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     return (
         <tbody>
@@ -42,6 +67,7 @@ function UsersList() {
                     </td>
                     <td>
                         <button
+                            onClick={() => handleDelete(user._id)}
                             className="w-30 bg-gradient-to-r from-red-800 to-red-500 hover:from-red-900 hover:to-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                             type="button"
                         >

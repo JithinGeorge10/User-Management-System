@@ -114,7 +114,7 @@ export const adminlogin = async (req, res) => {
         if (email != process.env.ADMIN_EMAIL || password != process.env.ADMIN_PASSWORD) {
             return res.status(400).send('Enter valid credentials')
         }
-        let adminToken=createAdminToken(email)
+        let adminToken = createAdminToken(email)
         console.log(adminToken);
         res.cookie('jwtToken', adminToken, {
             maxAge,
@@ -130,8 +130,19 @@ export const adminlogin = async (req, res) => {
 
 export const userdetails = async (req, res) => {
     try {
-        const users = await user.find(); 
+        const users = await user.find();
         res.status(200).json(users);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+}
+
+export const deleteuser = async (req, res) => {
+    try {
+        const { userId } = req.body
+        await user.findByIdAndDelete(userId);
+        res.status(200).send('user deleted successfully');
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server Error' });
