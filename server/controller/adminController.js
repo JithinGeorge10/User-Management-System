@@ -30,7 +30,7 @@ export const adduser = async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ message: 'User with this email or phone number already exists.' });
         }
-        const userDetails = await user.create({ email, password, phone, username: name })
+        const userDetails = await user.create({ email, password, phone, username: name,createdAt: new Date() })
 
         return res.status(200).json(userDetails);
     } catch (error) {
@@ -66,7 +66,7 @@ export const adminlogin = async (req, res) => {
 
 export const userdetails = async (req, res) => {
     try {
-        const users = await user.find();
+        const users = await user.find().sort({ createdAt: -1 });
         res.status(200).json(users);
     } catch (error) {
         console.error(error);

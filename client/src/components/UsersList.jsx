@@ -4,7 +4,7 @@ import { DELETE_ROUTE, USERDETAIL_ROUTE } from '../utils/Constants';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 function UsersList({ searchTerm }) {
-    const navigate=useNavigate()
+    const navigate = useNavigate()
     const [users, setUsers] = useState(null);
 
     useEffect(() => {
@@ -23,7 +23,11 @@ function UsersList({ searchTerm }) {
                 showCancelButton: true,
                 confirmButtonText: 'Yes, log out!',
                 cancelButtonText: 'No, cancel!',
-                reverseButtons: true
+                reverseButtons: true,
+                customClass: {
+                    confirmButton: 'swal-button-confirm',
+                    cancelButton: 'swal-button-cancel'
+                }
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     const response = await apiClient.post(DELETE_ROUTE, { userId }, { withCredentials: true })

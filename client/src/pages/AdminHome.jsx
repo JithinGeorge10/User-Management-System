@@ -32,7 +32,11 @@ function AdminHome() {
                 showCancelButton: true,
                 confirmButtonText: 'Yes, log out!',
                 cancelButtonText: 'No, cancel!',
-                reverseButtons: true
+                reverseButtons: true,
+                customClass: {
+                    confirmButton: 'swal-button-confirm',
+                    cancelButton: 'swal-button-cancel'
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.cookie = "jwtToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -51,20 +55,22 @@ function AdminHome() {
     }
     return (
         <>
-            <nav className=" bg-gray-600 p-4 shadow-md">
-                <div className="container mx-auto flex items-center justify-between">
-                    <h1 className="text-white text-2xl font-bold">Admin Home</h1>
-                    <button
-                        onClick={handleLogout}
-                        className="w-30 bg-gradient-to-r from-red-800 to-red-500 hover:from-red-900 hover:to-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                        type="button"
-                    >
-                        Logout
-                    </button>
-                </div>
-            </nav>
+            <div style={{ backgroundColor: 'black', minHeight: '100vh' }}>
+                <nav className=" bg-gray-600 p-4 shadow-md">
+                    <div className="container mx-auto flex items-center justify-between">
+                        <h1 className="text-white text-2xl font-bold">Admin Home</h1>
+                        <button
+                            onClick={handleLogout}
+                            className="w-30 bg-gradient-to-r from-red-800 to-red-500 hover:from-red-900 hover:to-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            type="button"
+                        >
+                            Logout
+                        </button>
+                    </div>
+                </nav>
 
-            <UsersTable />
+                <UsersTable />
+            </div>
 
         </>
     )

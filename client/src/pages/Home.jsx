@@ -12,7 +12,7 @@ import Swal from 'sweetalert2';
 
 function Home() {
   const dispatch = useDispatch();
-  const userDetails = useSelector((state) => state.user.userDetails);
+  const userDetails = useSelector((store) => store.user.userDetails);
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(true)
   const [image, setImage] = useState(null)

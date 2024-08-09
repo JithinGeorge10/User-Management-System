@@ -18,7 +18,7 @@ export const signUp = async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ message: 'User with this email or phone number already exists.' });
         }
-        const userDetails = await user.create({ email, password, phone, username: name })
+        const userDetails = await user.create({ email, password, phone, username: name, createdAt: new Date()  })
         res.cookie('jwt', createToken(email, userDetails.id), {
             maxAge,
             sameSite: 'None',
